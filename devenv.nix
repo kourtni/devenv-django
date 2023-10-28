@@ -1,15 +1,15 @@
 { pkgs, ... }:
 
 let
-  db_user = "postgres";
+  db_user = "admin";
   db_host = "localhost";
   db_port = 5432;
-  db_name = "db";
+  db_name = "local_dev_db";
   python_version = "3.10";
   django_port = "8000";
 in
 {
-  packages = [ pkgs.git pkgs.postgresql_14 ];
+  packages = [ pkgs.git ];
 
   languages.python = {
     enable = true;
@@ -18,7 +18,7 @@ in
 
   env = {
     PYTHON_VERSION = python_version;
-    DATABASE_URL = "postgresql://${db_user}@${db_host}:${builtins.toString db_port}/${db_name}";
+    DATABASE_URL = "mysql://${db_user}@${db_host}:${builtins.toString db_port}/${db_name}";
     DEBUG = true;
     STATIC_ROOT = "/tmp/static";
   };
@@ -29,13 +29,27 @@ in
     echo "POETRY_STATUS=$POETRY_STATUS"
   '';
 
-  services.postgres = {
-    enable = true;
-    initialScript = "CREATE USER ${db_user} SUPERUSER;";
-    initialDatabases = [ { name = db_name; } ];
-    listen_addresses = db_host;
-    port = db_port;
-  };
+  services.mysql.enable = true;
+  services.mysql.initialDatabases = [ { name = db_name; } ];
+  services.mysql.ensureUsers = [
+    {
+      name = db_user;
+      password = "not4production";
+      ensurePermissions = {"${db_user}.*" = "ALL PRIVILEGES"; };
+    }
+  ];
+
+  # If you prefer postgres, uncomment the following lines and comment out the
+  # mysql lines above. You will also need to change the DATABASE_URL env var
+  # above to use postgres.
+
+  # services.postgres = {
+  #   enable = true;
+  #   initialScript = "CREATE USER ${db_user} SUPERUSER;";
+  #   initialDatabases = [ { name = db_name; } ];
+  #   listen_addresses = db_host;
+  #   port = db_port;
+  # };
 
   scripts = {
     dj.exec = ''
