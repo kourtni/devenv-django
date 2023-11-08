@@ -3,8 +3,9 @@
 let
   db_user = "admin";
   db_host = "localhost";
-  db_port = 5432;
+  db_port = 3306;
   db_name = "local_dev_db";
+  db_password = "not4production";
   python_version = "3.10";
   django_port = "8000";
 in
@@ -18,7 +19,7 @@ in
 
   env = {
     PYTHON_VERSION = python_version;
-    DATABASE_URL = "mysql://${db_user}@${db_host}:${builtins.toString db_port}/${db_name}";
+    DATABASE_URL = "mysql://${db_user}:${db_password}@${db_host}:${builtins.toString db_port}/${db_name}";
     DEBUG = true;
     STATIC_ROOT = "/tmp/static";
   };
@@ -30,11 +31,13 @@ in
   '';
 
   services.mysql.enable = true;
+  # The default is MariaDB. To use MySQL instead:
+  services.mysql.package = pkgs.mysql80;
   services.mysql.initialDatabases = [ { name = db_name; } ];
   services.mysql.ensureUsers = [
     {
       name = db_user;
-      password = "not4production";
+      password = db_password;
       ensurePermissions = {"${db_user}.*" = "ALL PRIVILEGES"; };
     }
   ];
