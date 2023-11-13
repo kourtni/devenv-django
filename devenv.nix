@@ -13,9 +13,9 @@ in
   packages = [
     pkgs.gcc  # This is only needed so that the mysqlclient can get installed
     pkgs.git
-    # Uncomment the package below or run `sudo apt install pkg-config` if you get errors similar to
+    # mysqlclient requires pkg-config or else we will get errors similar to
     # https://stackoverflow.com/questions/76585758/mysqlclient-cannot-install-via-pip-cannot-find-pkg-config-name-in-ubuntu
-    # pkgs.pkg-config
+    pkgs.pkg-config
     ];
 
   languages.python = {
