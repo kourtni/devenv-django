@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en-US">
+  <body>
+    {% if question %}
+        <p><strong> Question:</strong><br>
+        {{ question.question_text }}<br>
+        </p>
+        <p><strong>Choices:</strong>
+        <ol>
+        {% for choice in question.choice_set.all %}
+            <li>{{ choice.choice_text }}<br></li>
+        {% endfor %}
+        </ol>
+        </p>
+        <p><strong>Date Submitted:</strong><br>
+        {{ question.pub_date }}<br>
+        </p>
+    {% else %}
+        <p>That poll question does not exist.</p>
+    {% endif %}
+    <form action="{% url 'myapp:vote' question.id %}" method="post">
+      {% csrf_token %}
+      <fieldset>
+          <legend><h1>{{ question.question_text }}</h1></legend>
+          {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+          {% for choice in question.choice_set.all %}
+              <input type="radio" name="choice" id="choice{{ forloop.counter }}" value="{{ choice.id }}">
+              <label for="choice{{ forloop.counter }}">{{ choice.choice_text }}</label><br>
+          {% endfor %}
+      </fieldset>
+      <input type="submit" value="Vote">
+    </form>
+  </body>
+</html>

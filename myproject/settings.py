@@ -35,6 +35,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    "myapp.apps.MyAppConfig",
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -83,6 +84,17 @@ WSGI_APPLICATION = 'myproject.wsgi.application'
 # ... via something like django-environ or python-dotenv
 DATABASES = {
     'default': env.db()
+}
+
+
+# Caches
+# https://docs.djangoproject.com/en/3.2/topics/cache/
+
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.redis.RedisCache",
+        "LOCATION": "redis://127.0.0.1:6379",
+    }
 }
 
 
