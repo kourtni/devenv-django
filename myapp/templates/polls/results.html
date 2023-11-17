@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en-US">
+  <body>
+    {% if results %}
+        <p><strong> Question:</strong><br>
+        {{ results.0.question.question_text }}<br>
+        </p>
+        <p><strong>Choices:</strong>
+        <table cellpadding="2" cellspacing="5">
+          {% for choice in results %}
+              <tr>
+              <td>{{ choice.choice_text }}</td>
+              <td><strong>{{choice.votes}}</strong> vote(s)</td>
+              </tr>
+          {% endfor %}
+        </table>
+        </p>
+        <p><strong>Date Submitted:</strong><br>
+        {{ results.0.question.pub_date }}<br>
+        </p>
+        <p><strong>Last Vote Received:</strong><br>
+        {{ last_vote_received }}<br>
+        </p>
+    {% else %}
+        <p>That poll question does not exist.</p>
+    {% endif %}
+  </body>
+</html>
